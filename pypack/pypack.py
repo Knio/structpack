@@ -1,5 +1,4 @@
 import sys
-import msgpack
 
 class PackType(object):
     __id = 0
@@ -47,8 +46,7 @@ class Message(object):
     __metaclass__ = MessageMeta
 
     @classmethod
-    def load(cls, bytes):
-        data = msgpack.unpackb(bytes, use_list=False)
+    def load(cls, data):
         obj = object.__new__(cls)
         for i, d in enumerate(cls.pypack_members):
             setattr(obj, d.name, data[i])
@@ -56,7 +54,7 @@ class Message(object):
 
     def pack(self):
         data = [getattr(self, d.name) for d in self.pypack_members]
-        return msgpack.packb(data)
+        return data
 
 
 class Data(object):

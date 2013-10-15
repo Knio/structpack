@@ -119,5 +119,8 @@ class Data(object):
     def dict(self, keycls, valcls):
         return Dict(keycls, valcls)
 
+    def ref(self, reference):
+        return Reference(reference)
+
 data = Data()
 

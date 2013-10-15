@@ -1,6 +1,54 @@
 
 from pypack import data
 
+'''
+A trivial example.
+'''
+class Point(data.msg):
+    x = data.float
+    y = data.float
+    z = data.float
+
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+
+def test_point():
+    p1 = Point(1., 2., 3.)
+    json = p1.pack()
+    assert json == (1., 2., 3.)
+    p2 = Point.load(json)
+    assert p1.x == p2.x
+    assert p1.y == p2.y
+    assert p1.z == p2.z
+
+
+'''
+pypack can serialize nested objects, if those objects themselves
+are serializable.
+'''
+class Circle(data.msg):
+    center = data.ref(Point)
+    radius = data.float
+
+    def __init__(self, center, radius):
+        self.center = center
+        self.radius = radius
+
+
+def test_circle():
+    c1 = Circle(Point(1., 2., 3.), 4.)
+    print c1.pypack_members
+    json = c1.pack()
+    assert json == ((1., 2., 3.), 4.)
+    c2 = Circle.load(json)
+    assert c1.center.x == c2.center.x
+    assert c1.center.y == c2.center.y
+    assert c1.center.z == c2.center.z
+    assert c1.radius == c2.radius
+
 class NestedMessage(data.msg):
     a = data.str
     b = data.float

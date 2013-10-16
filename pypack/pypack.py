@@ -10,11 +10,11 @@ class PackType(object):
         return cmp(self.id, other.id)
 
     @staticmethod
-    def load(a):
+    def load(a, with_names=False):
         return a
 
     @staticmethod
-    def pack(a):
+    def pack(a, with_names=False):
         return a
 
 
@@ -35,11 +35,11 @@ class List(PackType):
         PackType.__init__(self)
         self.cls = cls
 
-    def load(self, a):
-        return list(self.cls.load(i) for i in a)
+    def load(self, a, with_names=False):
+        return list(self.cls.load(i, with_names) for i in a)
 
-    def pack(self, a):
-        return tuple(self.cls.pack(i) for i in a)
+    def pack(self, a, with_names=False):
+        return tuple(self.cls.pack(i, with_names) for i in a)
 
 class Dict(PackType):
     def __init__(self, keycls, valcls):
@@ -47,11 +47,11 @@ class Dict(PackType):
         self.keycls = keycls
         self.valcls = valcls
 
-    def load(self, a):
-        return {self.keycls.load(k): self.valcls.load(v) for k, v in a.iteritems()}
+    def load(self, a, with_names=False):
+        return {self.keycls.load(k, with_names): self.valcls.load(v, with_names) for k, v in a.iteritems()}
 
-    def pack(self, a):
-        return {self.keycls.pack(k): self.valcls.pack(v) for k, v in a.iteritems()}
+    def pack(self, a, with_names=False):
+        return {self.keycls.pack(k, with_names): self.valcls.pack(v, with_names) for k, v in a.iteritems()}
 
 class Reference(PackType):
     def __init__(self, cls):
@@ -83,15 +83,22 @@ class Message(object):
     __metaclass__ = MessageMeta
 
     @classmethod
-    def load(cls, data):
+    def load(cls, data, with_names=False):
         obj = object.__new__(cls)
         for i, d in enumerate(cls.pypack_members):
-            setattr(obj, d.name, d.load(data[i]))
+            if with_names or type(data) is dict:
+                v = d.load(data[d.name], with_names)
+            else:
+                v = d.load(data[i], with_names)
+            setattr(obj, d.name, v)
+
         return obj
 
-    def pack(self):
-        data = tuple(d.pack(getattr(self, d.name)) for d in self.pypack_members)
-        return data
+    def pack(self, with_names=False):
+        if with_names:
+            return {d.name: d.pack(getattr(self, d.name), with_names) for d in self.pypack_members}
+        else: 
+            return tuple(d.pack(getattr(self, d.name), with_names) for d in self.pypack_members)
 
 
 class Data(object):
@@ -119,7 +126,7 @@ class Data(object):
     def dict(self, keycls, valcls):
         return Dict(keycls, valcls)
 
-    def ref(self, reference):
+    def child(self, reference):
         return Reference(reference)
 
 data = Data()

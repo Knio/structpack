@@ -1,5 +1,5 @@
 
-from pypack import data
+from structpack import data
 
 '''
 A trivial example.
@@ -37,7 +37,7 @@ def test_point_names():
 
 
 '''
-pypack can serialize nested objects, if those objects themselves
+structpack can serialize nested objects, if those objects themselves
 are serializable.
 '''
 class Circle(data.msg):
@@ -51,7 +51,6 @@ class Circle(data.msg):
 
 def test_circle():
     c1 = Circle(Point(1., 2., 3.), 4.)
-    print c1.pypack_members
     json = c1.pack()
     assert json == ((1., 2., 3.), 4.)
     c2 = Circle.load(json)
@@ -63,7 +62,6 @@ def test_circle():
 
 def test_circle_names():
     c1 = Circle(Point(1., 2., 3.), 4.)
-    print c1.pypack_members
     json = c1.pack(True)
     assert json == {'center': {'x': 1., 'y': 2., 'z': 3.}, 'radius': 4.}
     c2 = Circle.load(json)
@@ -110,7 +108,6 @@ def test():
     # serialize it
     data = m.pack()
     print data
-    print m.pypack_members
     print type(NestedMessage)
     assert data == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
 

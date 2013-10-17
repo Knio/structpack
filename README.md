@@ -1,5 +1,4 @@
-pypack
-======
+structpack
+==========
 
-A Python library for serializing and deserializing objects to JSON-compatable
-values (dicts, lists, strings, ints, floats, bools). 
+A Python library for serializing and deserializing object trees to JSON-compatable values (dicts, lists, strings, ints, floats, bools).

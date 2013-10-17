@@ -75,7 +75,7 @@ class MessageMeta(type):
                 r.name = k
                 members.append(r)
         members.sort()
-        cls.pypack_members = members
+        cls._struct_members = members
         print cls, name, bases, dict
 
 
@@ -85,7 +85,7 @@ class Message(object):
     @classmethod
     def load(cls, data, with_names=False):
         obj = object.__new__(cls)
-        for i, d in enumerate(cls.pypack_members):
+        for i, d in enumerate(cls._struct_members):
             if with_names or type(data) is dict:
                 v = d.load(data[d.name], with_names)
             else:
@@ -96,9 +96,9 @@ class Message(object):
 
     def pack(self, with_names=False):
         if with_names:
-            return {d.name: d.pack(getattr(self, d.name), with_names) for d in self.pypack_members}
-        else: 
-            return tuple(d.pack(getattr(self, d.name), with_names) for d in self.pypack_members)
+            return {d.name: d.pack(getattr(self, d.name), with_names) for d in self._struct_members}
+        else:
+            return tuple(d.pack(getattr(self, d.name), with_names) for d in self._struct_members)
 
 
 class Data(object):

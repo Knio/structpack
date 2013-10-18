@@ -89,7 +89,7 @@ class TestMessage(data.msg):
     d = data.list(data.int)
     e = data.dict(data.str, data.float)
     f = data.list(NestedMessage)
-    g = NestedMessage
+    g = data.child(NestedMessage)
 
     def __init__(self, a, b, c, d, e, f, g):
         self.a = a

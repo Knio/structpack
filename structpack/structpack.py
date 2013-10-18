@@ -9,37 +9,41 @@ class PackType(object):
     def __cmp__(self, other):
         return cmp(self.id, other.id)
 
+
+class PrimitiveType(PackType):
     @staticmethod
-    def load(a, with_names=False):
+    def load(a, **kwargs):
         return a
 
     @staticmethod
-    def pack(a, with_names=False):
+    def pack(a, **kwargs):
         return a
 
 
-class Bool(PackType):
+class Bool(PrimitiveType):
     pass
 
-class Int(PackType):
+class Int(PrimitiveType):
     pass
 
-class Float(PackType):
+class Float(PrimitiveType):
     pass
 
-class Str(PackType):
+class Str(PrimitiveType):
     pass
+
 
 class List(PackType):
     def __init__(self, cls):
         PackType.__init__(self)
         self.cls = cls
 
-    def load(self, a, with_names=False):
-        return list(self.cls.load(i, with_names) for i in a)
+    def load(self, a, **kwargs):
+        return list(self.cls.load(i, **kwargs) for i in a)
 
-    def pack(self, a, with_names=False):
-        return tuple(self.cls.pack(i, with_names) for i in a)
+    def pack(self, a, **kwargs):
+        return tuple(self.cls.pack(i, **kwargs) for i in a)
+
 
 class Dict(PackType):
     def __init__(self, keycls, valcls):
@@ -47,11 +51,14 @@ class Dict(PackType):
         self.keycls = keycls
         self.valcls = valcls
 
-    def load(self, a, with_names=False):
-        return {self.keycls.load(k, with_names): self.valcls.load(v, with_names) for k, v in a.iteritems()}
+    def load(self, a, **kwargs):
+        return {self.keycls.load(k, **kwargs): self.valcls.load(v, **kwargs)
+            for k, v in a.iteritems()}
 
-    def pack(self, a, with_names=False):
-        return {self.keycls.pack(k, with_names): self.valcls.pack(v, with_names) for k, v in a.iteritems()}
+    def pack(self, a, **kwargs):
+        return {self.keycls.pack(k, **kwargs): self.valcls.pack(v, **kwargs)
+            for k, v in a.iteritems()}
+
 
 class Reference(PackType):
     def __init__(self, cls):
@@ -70,10 +77,6 @@ class MessageMeta(type):
             if isinstance(v, PackType):
                 v.name = k
                 members.append(v)
-            elif type(v) is MessageMeta:
-                r = Reference(v)
-                r.name = k
-                members.append(r)
         members.sort()
         cls._struct_members = members
         print cls, name, bases, dict
@@ -87,18 +90,20 @@ class Message(object):
         obj = object.__new__(cls)
         for i, d in enumerate(cls._struct_members):
             if with_names or type(data) is dict:
-                v = d.load(data[d.name], with_names)
+                v = d.load(data[d.name], with_names=with_names)
             else:
-                v = d.load(data[i], with_names)
+                v = d.load(data[i], with_names=with_names)
             setattr(obj, d.name, v)
 
         return obj
 
     def pack(self, with_names=False):
         if with_names:
-            return {d.name: d.pack(getattr(self, d.name), with_names) for d in self._struct_members}
+            return {d.name: d.pack(getattr(self, d.name), with_names=with_names)
+                for d in self._struct_members}
         else:
-            return tuple(d.pack(getattr(self, d.name), with_names) for d in self._struct_members)
+            return tuple(d.pack(getattr(self, d.name), with_names=with_names)
+                for d in self._struct_members)
 
 
 class Data(object):

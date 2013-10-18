@@ -12,3 +12,12 @@ Installation
 The recommended way to install structpack is with [pip](http://pypi.python.org/pypi/pip/):
 
     pip install structpack
+
+
+
+TODO
+----
+
+- Docs / examples
+- Type check values
+- Benchmark & optimize

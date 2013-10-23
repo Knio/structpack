@@ -1,4 +1,3 @@
-import sys
 
 class PackType(object):
     __id = 0
@@ -79,7 +78,6 @@ class MessageMeta(type):
                 members.append(v)
         members.sort()
         cls._struct_members = members
-        print cls, name, bases, dict
 
 
 class Message(object):
@@ -135,4 +133,3 @@ class Data(object):
         return Reference(reference)
 
 data = Data()
-

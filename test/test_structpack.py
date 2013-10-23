@@ -1,13 +1,13 @@
 
-from structpack import data
+import structpack
 
 '''
 A trivial example.
 '''
-class Point(data.msg):
-    x = data.float
-    y = data.float
-    z = data.float
+class Point(structpack.msg):
+    x = structpack.float
+    y = structpack.float
+    z = structpack.float
 
     def __init__(self, x, y, z):
         self.x = x
@@ -40,9 +40,9 @@ def test_point_names():
 structpack can serialize nested objects, if those objects themselves
 are serializable.
 '''
-class Circle(data.msg):
-    center = data.child(Point)
-    radius = data.float
+class Circle(structpack.msg):
+    center = structpack.child(Point)
+    radius = structpack.float
 
     def __init__(self, center, radius):
         self.center = center
@@ -72,9 +72,9 @@ def test_circle_names():
 
 
 
-class NestedMessage(data.msg):
-    a = data.str
-    b = data.float
+class NestedMessage(structpack.msg):
+    a = structpack.str
+    b = structpack.float
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -82,14 +82,14 @@ class NestedMessage(data.msg):
         return self.a == obj.a and self.b == obj.b
 
 
-class TestMessage(data.msg):
-    a = data.str
-    b = data.int
-    c = data.float
-    d = data.list(data.int)
-    e = data.dict(data.str, data.float)
-    f = data.list(NestedMessage)
-    g = data.child(NestedMessage)
+class TestMessage(structpack.msg):
+    a = structpack.str
+    b = structpack.int
+    c = structpack.float
+    d = structpack.list(structpack.int)
+    e = structpack.dict(structpack.str, structpack.float)
+    f = structpack.list(NestedMessage)
+    g = structpack.child(NestedMessage)
 
     def __init__(self, a, b, c, d, e, f, g):
         self.a = a
@@ -106,13 +106,13 @@ def test():
     m = TestMessage('Hi!', 10, 3.14, [4, 5], {'one': 0.999, 'two': 2.0001}, [NestedMessage('foo', 2.71), NestedMessage('bar', -1)], NestedMessage('baz', 8))
 
     # serialize it
-    data = m.pack()
-    print data
+    json = m.pack()
+    print json
     print type(NestedMessage)
-    assert data == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
+    assert json == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
 
     # unserialize it
-    m2 = TestMessage.load(data)
+    m2 = TestMessage.load(json)
 
 
     # it's the same!

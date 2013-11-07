@@ -1,6 +1,10 @@
 
 import structpack
 
+
+def test_version():
+    assert structpack.__version__ == '1.0.1'
+
 '''
 A trivial example.
 '''

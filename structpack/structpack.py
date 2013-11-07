@@ -105,6 +105,7 @@ class Message(object):
 
 
 class Data(object):
+    __version__ = '1.0.1'
     msg = Message
 
     @property

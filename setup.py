@@ -1,8 +1,9 @@
+import structpack
 from setuptools import setup
 
 setup(
     name='structpack',
-    version='0.2',
+    version=structpack.version,
     url='http://github.com/Knio/structpack',
     description='''A Python library for serializing and deserializing object trees to JSON-compatable values (dicts, lists, strings, ints, floats, bools).''',
     author='Tom Flanagan',

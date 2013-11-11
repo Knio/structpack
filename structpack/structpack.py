@@ -71,13 +71,15 @@ class MessageMeta(type):
     def __init__(cls, name, bases, dict):
         super(MessageMeta, cls).__init__(name, bases, dict)
         # collect attributes
-        members = []
+        members = {}
+        for c in reversed(cls.__mro__):
+            for v in getattr(c, '_struct_members', []):
+                members[v.name] = v
         for k, v in dict.iteritems():
             if isinstance(v, PackType):
                 v.name = k
-                members.append(v)
-        members.sort()
-        cls._struct_members = members
+                members[k] = v
+        cls._struct_members = sorted(members.values())
 
 
 class Message(object):
@@ -92,7 +94,6 @@ class Message(object):
             else:
                 v = d.load(data[i], with_names=with_names)
             setattr(obj, d.name, v)
-
         return obj
 
     def pack(self, with_names=False):
@@ -105,7 +106,7 @@ class Message(object):
 
 
 class Data(object):
-    __version__ = '1.0.1'
+    __version__ = '1.1.0'
     msg = Message
 
     @property

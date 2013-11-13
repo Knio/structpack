@@ -3,7 +3,7 @@ import structpack
 
 
 def test_version():
-    assert structpack.__version__ == '1.1.0'
+    assert structpack.__version__ == '1.1.1'
 
 '''
 A trivial example.
@@ -145,6 +145,7 @@ def test_inheritance():
     assert b2.a == 1
     assert b2.b == 2
 
+
 def test_inheritance_override():
     class Foo(structpack.msg):
         a = structpack.int
@@ -159,3 +160,17 @@ def test_inheritance_override():
     assert b2.a == 'hi'
 
 
+def test_list():
+    class Foo(structpack.msg):
+        a = structpack.int
+        def __init__(self, a):
+            self.a = a
+    class Bar(structpack.msg):
+        items = structpack.list(Foo)
+    b = Bar()
+    b.items = [Foo(1), Foo(2)]
+    data = b.pack()
+    assert data == (((1,), (2,)),)
+    b2 = b.load(data)
+    assert b2.items[0].a == 1
+    assert b2.items[1].a == 2

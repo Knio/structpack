@@ -10,26 +10,27 @@ class PackType(object):
 
 
 class PrimitiveType(PackType):
-    @staticmethod
-    def load(a, **kwargs):
+    native = None
+    @classmethod
+    def load(cls, a, **kwargs):
         return a
 
-    @staticmethod
-    def pack(a, **kwargs):
-        return a
+    @classmethod
+    def pack(cls, a, **kwargs):
+        return cls.native(a)
 
 
 class Bool(PrimitiveType):
-    pass
+    native = bool
 
 class Int(PrimitiveType):
-    pass
+    native = int
 
 class Float(PrimitiveType):
-    pass
+    native = float
 
 class Str(PrimitiveType):
-    pass
+    native = str
 
 
 class List(PackType):
@@ -106,7 +107,7 @@ class Message(object):
 
 
 class Data(object):
-    version = __version__ = '1.1.1'
+    version = __version__ = '1.2.0'
     msg = Message
 
     @property

@@ -3,7 +3,7 @@ import structpack
 
 
 def test_version():
-    assert structpack.__version__ == '1.1.1'
+    assert structpack.__version__ == '1.2.0'
 
 '''
 A trivial example.
@@ -174,3 +174,18 @@ def test_list():
     b2 = b.load(data)
     assert b2.items[0].a == 1
     assert b2.items[1].a == 2
+
+
+'''
+Strutpack will try to convert members to the right defined type
+'''
+def test_types():
+    class Foo(structpack.msg):
+        a_int = structpack.int
+        a_float = structpack.float
+
+    f = Foo()
+    f.a_int = 3.14
+    f.a_float = 2
+    data = f.pack()
+    assert data == (3, 2.0)

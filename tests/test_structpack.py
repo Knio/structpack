@@ -3,10 +3,10 @@ import structpack
 
 
 def test_version():
-    assert structpack.__version__ == '1.2.0'
+    assert structpack.version == '1.3.0'
 
 '''
-A trivial example.
+A trivial example that shows how to use Structpack
 '''
 class Point(structpack.msg):
     x = structpack.float
@@ -41,7 +41,7 @@ def test_point_names():
 
 
 '''
-structpack can serialize nested objects, if those objects themselves
+Structpack can serialize nested objects with the `child` field, if those objects themselves
 are serializable.
 '''
 class Circle(structpack.msg):
@@ -128,7 +128,9 @@ def test():
     assert m.f == m2.f
     assert m.g == m2.g
 
-
+'''
+Structpack will include all fields from inherited classes when packing a derived class
+'''
 def test_inheritance():
     class Foo(structpack.msg):
         a = structpack.int
@@ -146,6 +148,9 @@ def test_inheritance():
     assert b2.b == 2
 
 
+'''
+Derived classes can override the inherited fields also
+'''
 def test_inheritance_override():
     class Foo(structpack.msg):
         a = structpack.int
@@ -177,7 +182,7 @@ def test_list():
 
 
 '''
-Strutpack will try to convert members to the right defined type
+Structpack will try to convert object attributes to the correct type defined in the class before packing them
 '''
 def test_types():
     class Foo(structpack.msg):
@@ -189,3 +194,31 @@ def test_types():
     f.a_float = 2
     data = f.pack()
     assert data == (3, 2.0)
+
+'''
+Structpack can also pass through arbitrary native object with the `value` type
+'''
+def test_value():
+    class Foo(structpack.msg):
+        x = structpack.value
+
+    f = Foo()
+    f.x = [1]
+    data = f.pack()
+    assert data == ([1,],)
+    f2 = f.load(data)
+    assert f2.x == f.x
+
+
+'''
+Structpack can use default values defined in the class fields if no attribute is set on the object
+TODO: implement this
+'''
+def _test_default():
+    class Foo(structpack.msg):
+        a = structpack.int(defualt=0)
+
+    f = Foo()
+    data = f.pack()
+    assert data == (0,)
+

@@ -19,6 +19,10 @@ class PrimitiveType(PackType):
     def pack(cls, a, **kwargs):
         return cls.native(a)
 
+class Value(PrimitiveType):
+    @classmethod
+    def pack(cls, a, **kwargs):
+        return a
 
 class Bool(PrimitiveType):
     native = bool
@@ -107,8 +111,12 @@ class Message(object):
 
 
 class Data(object):
-    version = __version__ = '1.2.0'
+    version = __version__ = '1.3.0'
     msg = Message
+
+    @property 
+    def value(self):
+        return Value()
 
     @property
     def int(self):

@@ -3,6 +3,9 @@ structpack
 
 A Python library for serializing and deserializing object trees to JSON-compatable values (dicts, lists, strings, ints, floats, bools).
 
+[![Build Status](https://travis-ci.org/Knio/structpack.svg?branch=master)](https://travis-ci.org/Knio/structpack)
+[![Coverage Status](https://coveralls.io/repos/Knio/structpack/badge.png)](https://coveralls.io/r/Knio/structpack)
+
 
 Installation
 ------------
@@ -10,6 +13,8 @@ Installation
 The recommended way to install structpack is with [pip](http://pypi.python.org/pypi/pip/):
 
     pip install structpack
+
+[![PyPI version](https://badge.fury.io/py/structpack.png)](http://badge.fury.io/py/structpack)
 
 
 Examples

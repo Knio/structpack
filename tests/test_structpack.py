@@ -110,13 +110,13 @@ def test():
     m = TestMessage('Hi!', 10, 3.14, [4, 5], {'one': 0.999, 'two': 2.0001}, [NestedMessage('foo', 2.71), NestedMessage('bar', -1)], NestedMessage('baz', 8))
 
     # serialize it
-    json = m.pack()
-    print json
-    print type(NestedMessage)
-    assert json == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
+    data = m.pack()
+    print(data)
+    print(type(NestedMessage))
+    assert data == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
 
     # unserialize it
-    m2 = TestMessage.load(json)
+    m2 = TestMessage.load(data)
 
 
     # it's the same!

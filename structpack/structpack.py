@@ -5,8 +5,8 @@ class PackType(object):
         PackType.__id += 1
         self.id = PackType.__id
 
-    def __cmp__(self, other):
-        return cmp(self.id, other.id)
+    def __lt__(self, other):
+        return self.id < other.id
 
 
 class PrimitiveType(PackType):
@@ -57,11 +57,11 @@ class Dict(PackType):
 
     def load(self, a, **kwargs):
         return {self.keycls.load(k, **kwargs): self.valcls.load(v, **kwargs)
-            for k, v in a.iteritems()}
+            for k, v in a.items()}
 
     def pack(self, a, **kwargs):
         return {self.keycls.pack(k, **kwargs): self.valcls.pack(v, **kwargs)
-            for k, v in a.iteritems()}
+            for k, v in a.items()}
 
 
 class Reference(PackType):
@@ -80,16 +80,17 @@ class MessageMeta(type):
         for c in reversed(cls.__mro__):
             for v in getattr(c, '_struct_members', []):
                 members[v.name] = v
-        for k, v in dict.iteritems():
+        for k, v in dict.items():
             if isinstance(v, PackType):
                 v.name = k
                 members[k] = v
         cls._struct_members = sorted(members.values())
 
+# http://mikewatkins.ca/2008/11/29/python-2-and-3-metaclasses/
+MessageBase = MessageMeta('MessageBase', (object,), {})
 
-class Message(object):
-    __metaclass__ = MessageMeta
 
+class Message(MessageBase):
     @classmethod
     def load(cls, data, with_names=False):
         obj = object.__new__(cls)

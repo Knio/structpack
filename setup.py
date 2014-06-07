@@ -1,9 +1,11 @@
-import structpack
 from setuptools import setup
+
+import imp
+_version = imp.load_source("structpack._version", "structpack/_version.py")
 
 setup(
     name        = 'structpack',
-    version     = structpack.__version__,
+    version     = _version.__version__,
     url         = 'https://github.com/Knio/structpack',
     author      = 'Tom Flanagan',
     author_email= 'tom@zkpq.ca',

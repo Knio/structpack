@@ -110,12 +110,13 @@ class Message(MessageBase):
             return tuple(d.pack(getattr(self, d.name), with_names=with_names)
                 for d in self._struct_members)
 
+from . import _version
 
 class Data(object):
-    version = __version__ = '1.3.0'
+    version = __version__ = _version.__version__
     msg = Message
 
-    @property 
+    @property
     def value(self):
         return Value()
 

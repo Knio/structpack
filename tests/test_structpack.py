@@ -3,10 +3,11 @@ import structpack
 
 
 def test_version():
-    assert structpack.version == '1.4.0'
+    assert structpack.version == '1.5.0'
 
 '''
-A trivial example that shows how to use Structpack
+A trivial example that shows how to use Structpack.
+This is a struct with 3 basic members
 '''
 class Point(structpack.msg):
     x = structpack.float
@@ -75,15 +76,16 @@ def test_circle_names():
     assert c1.radius == c2.radius
 
 
-
 class NestedMessage(structpack.msg):
     a = structpack.str
     b = structpack.float
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
+
     def __eq__(self, obj):
-        return self.a == obj.a and self.b == obj.b
+        return (self.a == obj.a) and (self.b == obj.b)
 
 
 class TestMessage(structpack.msg):
@@ -134,8 +136,10 @@ Structpack will include all fields from inherited classes when packing a derived
 def test_inheritance():
     class Foo(structpack.msg):
         a = structpack.int
+
     class Bar(Foo):
         b = structpack.int
+
     b = Bar()
     b.a = 1
     b.b = 2
@@ -154,8 +158,10 @@ Derived classes can override the inherited fields also
 def test_inheritance_override():
     class Foo(structpack.msg):
         a = structpack.int
+
     class Bar(Foo):
         a = structpack.str
+
     b = Bar()
     b.a = 'hi'
     data = b.pack()
@@ -170,8 +176,10 @@ def test_list():
         a = structpack.int
         def __init__(self, a):
             self.a = a
+
     class Bar(structpack.msg):
         items = structpack.list(Foo)
+
     b = Bar()
     b.items = [Foo(1), Foo(2)]
     data = b.pack()
@@ -195,8 +203,9 @@ def test_types():
     data = f.pack()
     assert data == (3, 2.0)
 
+
 '''
-Structpack can also pass through arbitrary native object with the `value` type
+Structpack can also pass through arbitrary native object with the `value` type, for untyped fields
 '''
 def test_value():
     class Foo(structpack.msg):

@@ -91,16 +91,33 @@ MessageBase = MessageMeta('MessageBase', (object,), {})
 
 
 class Message(MessageBase):
+    def __init__(self, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError('default constructor only accepts positional \
+                arguments or keyword arguments, not both')
+
+        if args:
+            self.replace(args)
+
+        if kwargs:
+            self.replace(kwargs, True)
+
+
     @classmethod
     def load(cls, data, with_names=False):
         obj = object.__new__(cls)
-        for i, d in enumerate(cls._struct_members):
+        obj.replace(data, with_names)
+        return obj
+
+
+    def replace(self, data, with_names=False):
+        for i, d in enumerate(self._struct_members):
             if with_names or type(data) is dict:
                 v = d.load(data[d.name], with_names=with_names)
             else:
                 v = d.load(data[i], with_names=with_names)
-            setattr(obj, d.name, v)
-        return obj
+            setattr(self, d.name, v)
+
 
     def pack(self, with_names=False):
         if with_names:

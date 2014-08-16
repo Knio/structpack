@@ -26,27 +26,24 @@ The `msg` class adds methods `pack` and `load` which convert your object to and 
 
 The following is a trivial example of how to make a `Point` type using structpack
 
-    import structpack
-    class Point(structpack.msg):
-        x = structpack.float
-        y = structpack.float
-        z = structpack.float
-        def __init__(self, x, y, z):
-            self.x = x
-            self.y = y
-            self.z = z
+```python
+import structpack
+class Point(structpack.msg):
+    x = structpack.float
+    y = structpack.float
+    z = structpack.float
 
-    >>> p1 = Point(1., 2., 3.)
-    >>> data = p1.pack()
-    >>> print data
-    (1.0, 2.0, 3.0)
+>>> p1 = Point(1., 2., 3.)
+>>> data = p1.pack()
+>>> print data
+(1.0, 2.0, 3.0)
 
-    >>> p2 = Point.load(data)
-    >>> print p2
-    <__main__.Point object at 0x0000000001EDA390>
-    >>> print p2.x, p2.y, p2.z
-    1.0 2.0 3.0
-
+>>> p2 = Point.load(data)
+>>> print p2
+<__main__.Point object at 0x0000000001EDA390>
+>>> print p2.x, p2.y, p2.z
+1.0 2.0 3.0
+```
 
 More
 ----

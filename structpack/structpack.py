@@ -36,6 +36,9 @@ class Float(PrimitiveType):
 class Str(PrimitiveType):
     native = str
 
+class Bytes(PrimitiveType):
+    native = bytes
+
 
 class List(PackType):
     def __init__(self, cls):
@@ -148,6 +151,10 @@ class Data(object):
     @property
     def str(self):
         return Str()
+
+    @property
+    def bytes(self):
+        return Bytes()
 
     @property
     def bool(self):

@@ -196,12 +196,16 @@ def test_types():
     class Foo(structpack.msg):
         a_int = structpack.int
         a_float = structpack.float
+        a_str = structpack.str
+        a_bytes = structpack.bytes
 
     f = Foo()
     f.a_int = 3.14
     f.a_float = 2
+    f.a_str = 'Hello'
+    f.a_bytes = b'World'
     data = f.pack()
-    assert data == (3, 2.0)
+    assert data == (3, 2.0, 'Hello', b'World')
 
 
 '''

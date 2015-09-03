@@ -3,7 +3,7 @@ import structpack
 
 
 def test_version():
-    assert structpack.version == '1.5.0'
+    assert structpack.version == '1.6.0'
 
 '''
 A trivial example that shows how to use Structpack.

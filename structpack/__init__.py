@@ -1,6 +1,4 @@
-from ._version import __version__
-version = __version__
-
-import sys
-from . import structpack
-sys.modules[__name__] = structpack.data
+from ._version import __version__, version
+from .structpack import Message as msg
+from .structpack import field
+from .structpack import struct

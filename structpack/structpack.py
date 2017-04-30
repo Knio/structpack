@@ -19,6 +19,7 @@ class PrimitiveType(PackType):
     def pack(cls, a, **kwargs):
         return cls.native(a)
 
+
 class Value(PrimitiveType):
     @classmethod
     def pack(cls, a, **kwargs):
@@ -39,6 +40,47 @@ class Str(PrimitiveType):
 class Bytes(PrimitiveType):
     native = bytes
 
+
+class Struct():
+    pass
+
+
+class StructMember(PackType):
+    def __init__(self, fmt):
+        super(StructMember, self).__init__()
+        self.fmt = fmt
+
+STRUCT_TYPES = [
+    ('x', 'padbyte'),
+    ('c', 'char'),
+    ('b', 'signedchar'),
+    ('B', 'unsignedchar'),
+    ('_', 'bool'),
+    ('h', 'short'),
+    ('H', 'unsignedshort'),
+    ('i', 'int'),
+    ('I', 'unsignedint'),
+    ('l', 'long'),
+    ('L', 'unsignedlong'),
+    ('q', 'longlong'),
+    ('Q', 'unsignedlonglong'),
+    ('n', 'ssize_t'),
+    ('N', 'size_t'),
+    ('e', 'halffloat'),
+    ('f', 'float'),
+    ('d', 'double'),
+    ('s', 'bytes'),
+    ('p', 'pascal'),
+    ('P', 'void'),
+]
+
+for fmt, name in STRUCT_TYPES:
+    @property
+    def _func(self):
+        return StructMember(fmt)
+    setattr(Struct, name, _func)
+
+struct = Struct()
 
 class List(PackType):
     def __init__(self, cls):
@@ -89,29 +131,23 @@ class MessageMeta(type):
                 members[k] = v
         cls._struct_members = sorted(members.values())
 
-# http://mikewatkins.ca/2008/11/29/python-2-and-3-metaclasses/
+
 MessageBase = MessageMeta('MessageBase', (object,), {})
-
-
 class Message(MessageBase):
     def __init__(self, *args, **kwargs):
         if args and kwargs:
             raise ValueError('default constructor only accepts positional \
                 arguments or keyword arguments, not both')
-
         if args:
             self.replace(args)
-
         if kwargs:
             self.replace(kwargs, True)
-
 
     @classmethod
     def load(cls, data, with_names=False):
         obj = object.__new__(cls)
         obj.replace(data, with_names)
         return obj
-
 
     def replace(self, data, with_names=False):
         for i, d in enumerate(self._struct_members):
@@ -121,7 +157,6 @@ class Message(MessageBase):
                 v = d.load(data[i], with_names=with_names)
             setattr(self, d.name, v)
 
-
     def pack(self, with_names=False):
         if with_names:
             return {d.name: d.pack(getattr(self, d.name), with_names=with_names)
@@ -130,12 +165,13 @@ class Message(MessageBase):
             return tuple(d.pack(getattr(self, d.name), with_names=with_names)
                 for d in self._struct_members)
 
-from . import _version
+    def pack_bytes(self):
+        import struct
+        fmt = ''.join(m.fmt for m in self._struct_members)
+        return struct.pack(fmt, *self.pack())
 
-class Data(object):
-    version = __version__ = _version.__version__
-    msg = Message
 
+class Fields(object):
     @property
     def value(self):
         return Value()
@@ -169,4 +205,4 @@ class Data(object):
     def child(self, reference):
         return Reference(reference)
 
-data = Data()
+field = Fields()
